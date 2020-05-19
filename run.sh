@@ -1,1 +1,1 @@
-deno run --allow-net --allow-env --allow-read --config ./tsconfig.json app.ts
+deno run --allow-net --allow-env --allow-write --allow-read --allow-plugin --unstable --config ./tsconfig.json app.ts
