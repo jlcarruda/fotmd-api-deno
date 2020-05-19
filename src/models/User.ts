@@ -1,21 +1,13 @@
-import IModel from './interfaces/IModel.ts'
 import Database from '../handlers/Database.ts'
+import Model from './dependencies/Model.ts';
 
-export default class User implements IModel {
-  private readonly modelname: string = 'users'
-  private static interface: User
+export default class User extends Model {
 
-  private handler: Database;
-  private collection: any;
-
-  constructor(handler: Database) {
-    if (User.interface) return User.interface
-    this.handler = handler
-    this.collection = handler.collection(this.modelname)
-    User.instance = this
+  constructor(handler?: Database) {
+    super('users', handler)
   }
 
-  async find(query: Object) {
+  public async find(query: Object) {
     return await this.collection.find(query)
   }
 
@@ -24,6 +16,6 @@ export default class User implements IModel {
   }
 
   public async aggregation(pipeline: Array<Object>) {
-    return await this.Collection.aggregation(pipeline)
+    return await this.collection.aggregation(pipeline)
   }
 }
