@@ -10,6 +10,7 @@ import {
 
 import DataObject from "../utils/DataObject.ts";
 import { User } from '../models.ts'
+import { UserAuthenticationError } from '../error-handler.ts'
 export default class Access {
 
   private static readonly sessionSign = Deno.env.get('SESSION_SIGN') ?? config()['SESSION_SIGN']
@@ -20,9 +21,12 @@ export default class Access {
     if (!keys.includes('username') || !keys.includes('password')) return false
     const { username, password } = body
     try {
-      const user = await new User().findOne({ username })
+      const user = await User.authenticate({ username, password })
       return user
     } catch(error) {
+      if (error instanceof UserAuthenticationError) {
+        return Promise.reject(error)
+      }
       console.error(error)
       throw error
     }
@@ -52,6 +56,9 @@ export default class Access {
         token: makeJwt({ key: Access.sessionSign, header, payload })
       }
     } catch (error) {
+      if (error instanceof UserAuthenticationError) {
+        return ctx.throw(401, error.message)
+      }
       ctx.throw(500)
     }
   }

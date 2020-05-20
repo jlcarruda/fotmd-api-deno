@@ -16,4 +16,16 @@ export default class Model {
     }
     return this.collection;
   }
+
+  public async find(query: Object) {
+    return this.getCollection()?.find(query)
+  }
+
+  public async findOne(query: Object) {
+    return this.getCollection()?.findOne(query)
+  }
+
+  public async aggregation(pipeline: Array<Object>) {
+    return this.getCollection()?.aggregate(pipeline)
+  }
 }
