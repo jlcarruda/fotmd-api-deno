@@ -1,21 +1,21 @@
-import Database from '../handlers/Database.ts'
+import { DatabaseHandler } from '../handlers/Database.ts'
 import Model from './dependencies/Model.ts';
 
-export default class User extends Model {
+export class User extends Model {
 
-  constructor(handler?: Database) {
-    super('users', handler)
+  constructor() {
+    super('users')
   }
 
   public async find(query: Object) {
-    return await this.collection.find(query)
+    return await this.getCollection()?.find(query)
   }
 
   public async findOne(query: Object) {
-    return await this.collection.findOne(query)
+    return await this.getCollection()?.findOne(query)
   }
 
   public async aggregation(pipeline: Array<Object>) {
-    return await this.collection.aggregation(pipeline)
+    return await this.getCollection()?.aggregate(pipeline)
   }
 }

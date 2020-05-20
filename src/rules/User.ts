@@ -1,6 +1,5 @@
 import { Context } from 'https://deno.land/x/oak/mod.ts'
 import Access from '../handlers/Access.ts'
-import DataObject from '../utils/DataObject.ts'
 
 const { isAuthenticated, authenticate } = Access
 
