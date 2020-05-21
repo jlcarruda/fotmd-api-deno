@@ -23,3 +23,6 @@ export function httpErrorHandler (ctx: Context, error: HttpError): void {
 }
 
 export class UserAuthenticationError extends Error {}
+export class UsernameConflictError extends Error {}
+
+export class SchemaValidationError extends Error {}
