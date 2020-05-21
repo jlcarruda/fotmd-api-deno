@@ -6,25 +6,25 @@ This project was born with the goal to create an API to handle the requests made
 ## Roadmap
 #### Features
 * Database Connection setup function <u>*(DONE)*</u>
-* Decorators
+* Decorators <u>*(1/2)*</u>
   * Authentication Decorator for rules access <u>*(DONE)*</u>
   * Authorization Decorator, for features who need only specific roles and users to access
 * Payload validation for sanitizing and validate user input
 * Custom Types enum
 * Custom errors lib
-* Models
+* Models<u>*(0/3)*</u>
   * User Model
   * Character Model
   * Table Model
-* 'Mongoose' Like Schema validator for models
-  * schemaToObject
+* 'Mongoose' Like Schema validator for models <u>*(1/3)*</u>
+  * schemaToObject <u>*(DONE. Implemented into the Model class. Later will be isolated)*</u>
   * validate schema on saving
   * populate
 
 ## Routes
 #### User
 * POST /user/auth <u>*(DONE)*</u>
-* POST /user/signup
+* POST /user/signup <u>*(DONE)*</u>
 * POST /user/logout
 * GET /user/profile
 * GET /user/character
