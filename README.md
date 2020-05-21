@@ -10,6 +10,7 @@ This project was born with the goal to create an API to handle the requests made
   * Authentication Decorator for rules access <u>*(DONE)*</u>
   * Authorization Decorator, for features who need only specific roles and users to access
 * Payload validation for sanitizing and validate user input
+* Implement User roles
 * Custom Types enum
 * Custom errors lib
 * Models<u>*(0/3)*</u>

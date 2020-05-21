@@ -17,8 +17,8 @@ export default class UserRules {
       const { username, password } = body.value
       const inserted = await User.signup({ username, password })
       if (!inserted) return Promise.reject(new UserSignupFailError())
-      ctx.response.body = { 
-        message: "User signed up Succe"
+      ctx.response.body = {
+        message: "User signed up Successfully"
       }
       return authenticate(ctx)
     } catch(error) {
