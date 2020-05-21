@@ -1,8 +1,8 @@
 import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
-import { UserAuthenticationError, UsernameConflictError } from '../error-handler.ts'
+import { UserAuthenticationError, UserSignupFailError } from '../error-handler.ts'
 import Model from './dependencies/Model.ts';
 
-type SignupPayload = { username: string, rawPassword: string }
+type SignupPayload = { username: string, password: string }
 type AuthenticatePayload = { username: string, password: string }
 
 export default class User extends Model {
@@ -32,18 +32,29 @@ export default class User extends Model {
     }
   }
 
-  public async signup({ username, rawPassword }: SignupPayload) {
+  public async signup({ username, password }: SignupPayload) {
     try {
+      /**
+       * NOTE: Mongo Plugin does not throw the Rust error to Deno. It will crash the server with a Rust error if
+       * username already exists and we try to insert it. Checking username first
+       */
       const user = await this.findByUsername(username)
-      if (user) return Promise.reject(new UsernameConflictError("Username is not available"))
-      const password = await this.encryptPassword(rawPassword)
+      if (user) return Promise.reject(new UserSignupFailError("Username not valid or unavailable"))
 
-      await this.insertOne({
+      const encryptedPassword = await this.encryptPassword(password)
+
+      const insertedId = await this.insertOne({
         username,
-        password
+        password: encryptedPassword
       })
-    } catch(error) {
 
+      if (!insertedId) {
+        return Promise.reject(new UserSignupFailError())
+      }
+
+      return insertedId
+    } catch(error) {
+      throw error
     }
   }
 

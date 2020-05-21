@@ -1,6 +1,6 @@
 import { Collection } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
-import { DatabaseHandler } from '../../handlers/Database.ts'\
-import { SchemaValidationError } from '../../error-handler.ts'
+import { DatabaseHandler } from '../../handlers/Database.ts'
+import { SchemaValidationError, MongoQueryError } from '../../error-handler.ts'
 
 type SchemaAtribute = Array<SchemaAtribute> | { type?: string , default?: string | Object, null?: boolean }
 type GenericObject = { [key: string]: any }
@@ -35,7 +35,7 @@ export default class Model {
             return aux[k] = schemaAtb.default
           }
 
-          throw new SchemaValidationError(`default value and attribute type mismatch: ${this.modelname}.${k}`)
+          throw new SchemaValidationError(`Default value and attribute type mismatch: ${this.modelname}.${k}`)
         } else {
           switch(schemaAtb.type) {
             case 'string':
@@ -48,7 +48,7 @@ export default class Model {
               if ([undefined, true].includes(schemaAtb.null)) {
                 return aux[k] = null
               } else if (!schemaAtb.default) {
-                throw new SchemaValidationError(`not nullable attributes must have a 'default' value`)
+                throw new SchemaValidationError(`Not nullable attributes must have a 'default' value`)
               }
           }
         }
@@ -65,19 +65,43 @@ export default class Model {
     return this.collection;
   }
 
-  public async find(query: Object) {
-    return this.getCollection()?.find(query)
+  protected async find(query: Object) {
+    try {
+      const result = await this.getCollection()?.find(query)
+      return result
+    } catch(error) {
+      console.error(error)
+      return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
+    }
   }
 
-  public async findOne(query: Object) {
-    return this.getCollection()?.findOne(query)
+  protected async findOne(query: Object) {
+    try {
+      const result = await this.getCollection()?.findOne(query)
+      return result
+    } catch(error) {
+      console.error(error)
+      return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
+    }
   }
 
-  public async aggregation(pipeline: Array<Object>) {
-    return this.getCollection()?.aggregate(pipeline)
+  protected async aggregation(pipeline: Array<Object>) {
+    try {
+      const result = await this.getCollection()?.aggregate(pipeline)
+      return result
+    } catch(error) {
+      console.error(error)
+      return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
+    }
   }
 
-  public async insertOne(payload: Object) {
-    return this.getCollection()?.insertOne(payload)
+  protected async insertOne(payload: Object) {
+    try {
+      const result = await this.getCollection()?.insertOne(payload)
+      return result
+    } catch(error) {
+      console.error(error)
+      return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
+    }
   }
 }
