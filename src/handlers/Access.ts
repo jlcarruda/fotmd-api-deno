@@ -53,6 +53,7 @@ export default class Access {
       }
 
       ctx.response.body = {
+        ...ctx.response.body,
         token: makeJwt({ key: Access.sessionSign, header, payload })
       }
     } catch (error) {

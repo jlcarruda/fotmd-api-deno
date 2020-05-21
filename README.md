@@ -4,8 +4,27 @@
 This project was born with the goal to create an API to handle the requests made by an Android APP and a Web System, which will incorporate the game assets to play remotely.
 
 ## Roadmap
+#### Features
+* Database Connection setup function <u>*(DONE)*</u>
+* Decorators
+  * Authentication Decorator for rules access <u>*(DONE)*</u>
+  * Authorization Decorator, for features who need only specific roles and users to access
+* Payload validation for sanitizing and validate user input
+* Custom Types enum
+* Custom errors lib
+* Models
+  * User Model
+  * Character Model
+  * Table Model
+* 'Mongoose' Like Schema validator for models
+  * schemaToObject
+  * validate schema on saving
+  * populate
+
+## Routes
 #### User
-* POST /user/auth
+* POST /user/auth <u>*(DONE)*</u>
+* POST /user/signup
 * POST /user/logout
 * GET /user/profile
 * GET /user/character

@@ -12,6 +12,9 @@ export function httpErrorHandler (ctx: Context, error: HttpError): void {
     case Status.Unauthorized:
       ctx.response.status = 401
       break;
+    case Status.Conflict:
+      ctx.response.status = 409
+      break;
     default:
       sendMessageError = false
       break;
@@ -23,3 +26,12 @@ export function httpErrorHandler (ctx: Context, error: HttpError): void {
 }
 
 export class UserAuthenticationError extends Error {}
+export class UserSignupFailError extends Error {
+  constructor(message: string = "User signup failed") {
+    super(message)
+  }
+}
+
+export class SchemaValidationError extends Error {}
+
+export class MongoQueryError extends Error {}
