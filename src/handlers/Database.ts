@@ -1,22 +1,26 @@
-import { MongoClient } from "https://deno.land/x/mongo@v0.7.0/mod.ts";
+import { MongoClient, Database } from "https://deno.land/x/mongo@v0.7.0/mod.ts";
 
-export default class Database {
+export class DatabaseHandler {
 
-  private static instance: Database;
+  private static instance: DatabaseHandler;
 
-  private database: any;
+  private database: Database | null = null;
   private name: string = "";
   private uri: string = "";
   private readonly client: MongoClient = new MongoClient()
 
-  constructor(uri: string) {
-    if (Database.instance) return Database.instance
-    this.uri = uri
-    Database.instance = this
+  private constructor() {}
+
+  static getInstance(uri?: string): DatabaseHandler {
+    if (!DatabaseHandler.instance) {
+      DatabaseHandler.instance = new DatabaseHandler()
+      DatabaseHandler.instance.setUri(uri ?? "")
+    }
+    return DatabaseHandler.instance
   }
 
-  static getInstance(): Database {
-    return Database.instance
+  static hasInstance(): Boolean {
+    return !(!DatabaseHandler.instance)
   }
 
   getUri(): string {
@@ -27,7 +31,7 @@ export default class Database {
     this.uri = uri
   }
 
-  getDatabase() {
+  getDatabase(): Database | null {
     return this.database
   }
 

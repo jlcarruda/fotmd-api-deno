@@ -9,29 +9,41 @@ import {
 } from "https://deno.land/x/djwt/create.ts"
 
 import DataObject from "../utils/DataObject.ts";
-
+import { User } from '../models.ts'
+import { UserAuthenticationError } from '../error-handler.ts'
 export default class Access {
 
   private static readonly sessionSign = Deno.env.get('SESSION_SIGN') ?? config()['SESSION_SIGN']
 
   //TODO: Refactor to make this function validate payloads previously
-  private static validateBody(body: any): Boolean {
+  private static async validateCredentials(body: any){
     const keys = Object.keys(body)
-    return keys.includes('username') && keys.includes('password')
+    if (!keys.includes('username') || !keys.includes('password')) return false
+    const { username, password } = body
+    try {
+      const user = await User.authenticate({ username, password })
+      return user
+    } catch(error) {
+      if (error instanceof UserAuthenticationError) {
+        return Promise.reject(error)
+      }
+      console.error(error)
+      throw error
+    }
   }
 
   public static async authenticate(ctx : Context) {
     const { request } = ctx
     try {
       const { value } = await request.body()
-      ctx.assert(Access.validateBody(value), Status.Unauthorized)
+      const user = await Access.validateCredentials(value)
 
-      // Verify if user exists
+      ctx.assert(user, Status.Unauthorized)
 
       const payload: Payload = {
         iss: "fotmd-API",
-        sub: value.username,
-        user: value.username,
+        sub: user.username,
+        user: user.username,
         exp: setExpiration(new Date().getTime() + 60 * 60 * 1000)
       }
 
@@ -44,6 +56,9 @@ export default class Access {
         token: makeJwt({ key: Access.sessionSign, header, payload })
       }
     } catch (error) {
+      if (error instanceof UserAuthenticationError) {
+        return ctx.throw(401, error.message)
+      }
       ctx.throw(500)
     }
   }
