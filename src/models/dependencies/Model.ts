@@ -58,14 +58,14 @@ export default class Model {
     return aux
   }
 
-  protected getCollection(): Collection | null {
+  public getCollection(): Collection | null {
     if (!this.collection) {
       this.collection = DatabaseHandler.getInstance().getDatabase()?.collection(this.modelname) ?? null
     }
     return this.collection;
   }
 
-  protected async find(query: Object) {
+  public async find(query: Object) {
     try {
       const result = await this.getCollection()?.find(query)
       return result
@@ -75,7 +75,7 @@ export default class Model {
     }
   }
 
-  protected async findOne(query: Object) {
+  public async findOne(query: Object) {
     try {
       const result = await this.getCollection()?.findOne(query)
       return result
@@ -85,7 +85,7 @@ export default class Model {
     }
   }
 
-  protected async aggregation(pipeline: Array<Object>) {
+  public async aggregation(pipeline: Array<Object>) {
     try {
       const result = await this.getCollection()?.aggregate(pipeline)
       return result
@@ -95,9 +95,12 @@ export default class Model {
     }
   }
 
-  protected async insertOne(payload: Object) {
+  public async insertOne(payload: Object) {
     try {
-      const result = await this.getCollection()?.insertOne(payload)
+      const result = await this.getCollection()?.insertOne({
+        ...this.schemaToObject(),
+        ...payload
+      })
       return result
     } catch(error) {
       console.error(error)
