@@ -1,6 +1,6 @@
 
 // "Private" types
-type MongoType = 'string' | 'date' | 'number' | 'array'
+type MongoType = 'string' | 'date' | 'number' | 'array' | 'ref' | 'ref_array'
 
 // Standard Types
 export type GenericObject = { [key: string]: any }

@@ -1,4 +1,4 @@
-import { Collection } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
+import { Collection, ObjectId } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
 import { DatabaseHandler } from '../../handlers/Database.ts'
 import { SchemaValidationError, MongoQueryError, ModelPayloadValidationError } from '../../errors.ts'
 import { 
@@ -21,22 +21,41 @@ export default class Model {
   protected validatePayload(payload: GenericObject) {
     if (!this.schema) throw new ModelPayloadValidationError(`Schema from model ${this.modelname} is not set`)
     const keys = Object.keys(this.schema)
+    const defaultMessage = "Payload passed is not in compliance with the schema"
     for (let i in keys) {
       let key = keys[i]
       let atb: SchemaAtribute = this.schema[key]
       let payloadAtb = payload[key]
       if (payloadAtb !== undefined) {
-        if (Array.isArray(payloadAtb) && atb.type !== 'array') {
-          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be an Array.`)
+        if (atb.type === 'ref') {
+          try {
+            ObjectId(payloadAtb)
+            return
+          } catch (error) {
+            throw new ModelPayloadValidationError(`${defaultMessage}. Key '${key}' of payload should be a valid ObjectId`)
+          }
+        } else if (atb.type === 'ref_array') {
+          const error = new ModelPayloadValidationError(`${defaultMessage}. Key '${key}' of payload should be an array of valid ObjectIds`)
+          if (!Array.isArray(payloadAtb)) throw error
+          try {
+            for (let i in payloadAtb) {
+              ObjectId(payloadAtb[i])
+            }
+            return
+          } catch (e) {
+            throw error
+          }
+        } else if (Array.isArray(payloadAtb) && atb.type !== 'array') {
+          throw new ModelPayloadValidationError(`${defaultMessage}. Key '${key}' of payload should be an Array.`)
         } else if (payloadAtb instanceof Date && atb.type !== 'date') {
-          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be a Date.`)
+          throw new ModelPayloadValidationError(`${defaultMessage}. Key '${key}' of payload should be a Date.`)
         } else if (payloadAtb instanceof Number && atb.type !== 'number') {
-          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be a Number.`)
+          throw new ModelPayloadValidationError(`${defaultMessage}. Key '${key}' of payload should be a Number.`)
         } else if (typeof payloadAtb !== atb.type ) {
-          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be a String.`)
+          throw new ModelPayloadValidationError(`${defaultMessage}. Key '${key}' of payload should be a String.`)
         }
       } else if (atb.null === false) {
-        throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should not be undefined or null.`)
+        throw new ModelPayloadValidationError(`. Key '${key}' of payload should not be undefined or null.`)
       }
     }
   }
