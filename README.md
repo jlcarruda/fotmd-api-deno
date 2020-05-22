@@ -17,9 +17,9 @@ This project was born with the goal to create an API to handle the requests made
   * User Model
   * Character Model
   * Table Model
-* 'Mongoose' Like Schema validator for models <u>*(1/3)*</u>
+* 'Mongoose' Like Schema validator for models <u>*(2/3)*</u>
   * schemaToObject <u>*(DONE. Implemented into the Model class. Later will be isolated)*</u>
-  * validate schema on saving
+  * validate schema on saving <u>*(DONE)*</u>
   * populate
 
 ## Routes
