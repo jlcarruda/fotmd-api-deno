@@ -1,7 +1,7 @@
 import { Context } from 'https://deno.land/x/oak/mod.ts'
 import { User } from '../models.ts'
 import Access from '../handlers/Access.ts'
-import { UserSignupFailError } from '../error-handler.ts'
+import { UserSignupFailError } from '../errors.ts'
 import { SignupPayload } from '../types.ts'
 
 const { isAuthenticated, authenticate } = Access

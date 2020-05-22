@@ -11,8 +11,8 @@ This project was born with the goal to create an API to handle the requests made
   * Authorization Decorator, for features who need only specific roles and users to access
 * Payload validation for sanitizing and validate user input
 * Implement User roles
-* Custom Types enum
-* Custom errors lib
+* Custom Types enum  <u>*(DONE. Its not an Enum, but a module)*</u>
+* Custom errors lib <u>*(DONE)*</u>
 * Models<u>*(0/3)*</u>
   * User Model
   * Character Model

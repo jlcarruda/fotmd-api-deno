@@ -1,6 +1,6 @@
 import { Collection } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
 import { DatabaseHandler } from '../../handlers/Database.ts'
-import { SchemaValidationError, MongoQueryError, ModelPayloadValidationError } from '../../error-handler.ts'
+import { SchemaValidationError, MongoQueryError, ModelPayloadValidationError } from '../../errors.ts'
 import { 
   SchemaAtribute,
   GenericObject,

@@ -10,7 +10,7 @@ import {
 
 import DataObject from "../utils/DataObject.ts";
 import { User } from '../models.ts'
-import { UserAuthenticationError } from '../error-handler.ts'
+import { UserAuthenticationError } from '../errors.ts'
 export default class Access {
 
   private static readonly sessionSign = Deno.env.get('SESSION_SIGN') ?? config()['SESSION_SIGN']
