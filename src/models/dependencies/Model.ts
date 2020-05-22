@@ -1,11 +1,11 @@
 import { Collection } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
 import { DatabaseHandler } from '../../handlers/Database.ts'
 import { SchemaValidationError, MongoQueryError, ModelPayloadValidationError } from '../../error-handler.ts'
-
-type MongoType = 'string' | 'date' | 'number' | 'array'
-type SchemaAtribute = { type: MongoType , default?: string | Object, null?: boolean }
-type GenericObject = { [key: string]: any }
-type Schema = { [key: string]: SchemaAtribute }
+import { 
+  SchemaAtribute,
+  GenericObject,
+  Schema
+} from '../../types.ts'
 
 export default class Model {
   protected modelname: string
