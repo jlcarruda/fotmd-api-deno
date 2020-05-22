@@ -1,9 +1,8 @@
 import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
+
 import { UserAuthenticationError, UserSignupFailError } from '../error-handler.ts'
 import Model from './dependencies/Model.ts';
-
-type SignupPayload = { username: string, password: string }
-type AuthenticatePayload = { username: string, password: string }
+import { SignupPayload, AuthenticatePayload } from '../types.ts'
 
 export default class User extends Model {
   constructor() {

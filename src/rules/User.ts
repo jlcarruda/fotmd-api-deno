@@ -2,6 +2,7 @@ import { Context } from 'https://deno.land/x/oak/mod.ts'
 import { User } from '../models.ts'
 import Access from '../handlers/Access.ts'
 import { UserSignupFailError } from '../error-handler.ts'
+import { SignupPayload } from '../types.ts'
 
 const { isAuthenticated, authenticate } = Access
 
@@ -14,8 +15,9 @@ export default class UserRules {
   public static async signup (ctx: Context) {
     try {
       const body = await ctx.request.body()
-      const { username, password } = body.value
-      const inserted = await User.signup({ username, password })
+      const payload: SignupPayload = body.value
+      console.log(payload)
+      const inserted = await User.signup(payload)
       if (!inserted) return Promise.reject(new UserSignupFailError())
       ctx.response.body = {
         message: "User signed up Successfully"
