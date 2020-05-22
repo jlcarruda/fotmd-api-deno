@@ -10,15 +10,16 @@ This project was born with the goal to create an API to handle the requests made
   * Authentication Decorator for rules access <u>*(DONE)*</u>
   * Authorization Decorator, for features who need only specific roles and users to access
 * Payload validation for sanitizing and validate user input
+* Implement User roles
 * Custom Types enum
 * Custom errors lib
 * Models<u>*(0/3)*</u>
   * User Model
   * Character Model
   * Table Model
-* 'Mongoose' Like Schema validator for models <u>*(1/3)*</u>
+* 'Mongoose' Like Schema validator for models <u>*(2/3)*</u>
   * schemaToObject <u>*(DONE. Implemented into the Model class. Later will be isolated)*</u>
-  * validate schema on saving
+  * validate schema on saving <u>*(DONE)*</u>
   * populate
 
 ## Routes

@@ -11,9 +11,9 @@ export default class User extends Model {
     this.schema = {
       username: { type: 'string' },
       password: { type: 'string' },
-      characters: [],
-      tables_owned: [],
-      tables_participating: [],
+      characters: { type: 'array' },
+      tables_owned: { type: 'array' },
+      tables_participating: { type: 'array' },
       created_at: { type: 'date', default: new Date() },
       updated_at: { type: 'date', default: new Date() }
     }

@@ -1,8 +1,9 @@
 import { Collection } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
 import { DatabaseHandler } from '../../handlers/Database.ts'
-import { SchemaValidationError, MongoQueryError } from '../../error-handler.ts'
+import { SchemaValidationError, MongoQueryError, ModelPayloadValidationError } from '../../error-handler.ts'
 
-type SchemaAtribute = Array<SchemaAtribute> | { type?: string , default?: string | Object, null?: boolean }
+type MongoType = 'string' | 'date' | 'number' | 'array'
+type SchemaAtribute = { type: MongoType , default?: string | Object, null?: boolean }
 type GenericObject = { [key: string]: any }
 type Schema = { [key: string]: SchemaAtribute }
 
@@ -17,6 +18,29 @@ export default class Model {
     this.modelname = modelname
   }
 
+  protected validatePayload(payload: GenericObject) {
+    if (!this.schema) throw new ModelPayloadValidationError(`Schema from model ${this.modelname} is not set`)
+    const keys = Object.keys(this.schema)
+    for (let i in keys) {
+      let key = keys[i]
+      let atb: SchemaAtribute = this.schema[key]
+      let payloadAtb = payload[key]
+      if (payloadAtb !== undefined) {
+        if (Array.isArray(payloadAtb) && atb.type !== 'array') {
+          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be an Array.`)
+        } else if (payloadAtb instanceof Date && atb.type !== 'date') {
+          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be a Date.`)
+        } else if (payloadAtb instanceof Number && atb.type !== 'number') {
+          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be a Number.`)
+        } else if (typeof payloadAtb !== atb.type ) {
+          throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should be a String.`)
+        }
+      } else if (atb.null === false) {
+        throw new ModelPayloadValidationError(`Payload passed is not in compliance with the schema. Key '${key}' of payload should not be undefined or null.`)
+      }
+    }
+  }
+
   protected schemaToObject(): GenericObject {
     if (!this.schema) return {}
 
@@ -26,31 +50,22 @@ export default class Model {
     Object.keys(this.schema).forEach(k => {
       let schemaAtb: SchemaAtribute = schema[k]
 
-      if (Array.isArray(schemaAtb)) {
-        return aux[k] = []
-      } else {
-        if (schemaAtb.default) {
-          const type = typeof schemaAtb.default
-          if (type === schemaAtb.type || (type === 'object' && (schemaAtb.default instanceof Date))) {
-            return aux[k] = schemaAtb.default
-          }
+      if (schemaAtb.default) {
+        const type = typeof schemaAtb.default
+        if (type === schemaAtb.type || (type === 'object' && (schemaAtb.default instanceof Date))) {
+          return aux[k] = schemaAtb.default
+        }
+        throw new SchemaValidationError(`Default value and attribute type mismatch: ${this.modelname}.${k}`)
 
-          throw new SchemaValidationError(`Default value and attribute type mismatch: ${this.modelname}.${k}`)
-        } else {
-          switch(schemaAtb.type) {
-            case 'string':
-              return aux[k] = ""
-            case 'number':
-              return aux[k] = 0
-            case 'date':
-              return aux[k] = new Date()
-            default:
-              if ([undefined, true].includes(schemaAtb.null)) {
-                return aux[k] = null
-              } else if (!schemaAtb.default) {
-                throw new SchemaValidationError(`Not nullable attributes must have a 'default' value`)
-              }
-          }
+      } else if (schemaAtb.null === false) {
+        throw new SchemaValidationError(`Not nullable attributes must have a 'default' value`)
+
+      } else {
+        switch(schemaAtb.type) {
+          case 'array':
+            return aux[k] = []
+          default:
+            aux[k] = null
         }
       }
     })
@@ -95,8 +110,9 @@ export default class Model {
     }
   }
 
-  public async insertOne(payload: Object) {
+  public async insertOne(payload: GenericObject) {
     try {
+      this.validatePayload(payload)
       const result = await this.getCollection()?.insertOne({
         ...this.schemaToObject(),
         ...payload

@@ -33,5 +33,6 @@ export class UserSignupFailError extends Error {
 }
 
 export class SchemaValidationError extends Error {}
+export class ModelPayloadValidationError extends Error {}
 
 export class MongoQueryError extends Error {}
