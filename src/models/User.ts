@@ -1,6 +1,6 @@
 import * as bcrypt from "https://deno.land/x/bcrypt/mod.ts";
 
-import { UserAuthenticationError, UserSignupFailError } from '../error-handler.ts'
+import { UserAuthenticationError, UserSignupFailError } from '../errors.ts'
 import Model from './dependencies/Model.ts';
 import { SignupPayload, AuthenticatePayload } from '../types.ts'
 
