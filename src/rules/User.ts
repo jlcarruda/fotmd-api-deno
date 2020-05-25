@@ -3,6 +3,7 @@ import { User, Character } from '../models.ts'
 import Access from '../handlers/Access.ts'
 import { UserSignupFailError } from '../errors.ts'
 import { SignupPayload, DataDocument } from '../types.ts'
+import DataObject from '../utils/DataObject.ts'
 
 const { isAuthenticated, authenticate } = Access
 
@@ -35,8 +36,7 @@ export default class UserRules {
   }
 
   @isAuthenticated()
-  public static async getCharacters (ctx: Context, data: any) {
-    if (!data.auth) throw new Error("ERRO MAROTO")
+  public static async getCharacters (ctx: Context, data: DataObject) {
     try {
       const user: DataDocument = await User.findByUsername(data.auth?.username)
       const characters: Array<DataDocument> = await Character.findByUser(user._id)

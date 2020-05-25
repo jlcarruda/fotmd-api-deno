@@ -10,7 +10,7 @@ import {
 
 import DataObject from "../utils/DataObject.ts";
 import { User } from '../models.ts'
-import { UserAuthenticationError } from '../errors.ts'
+import { UserAuthenticationError, UnauthorizedRuleAccessError } from '../errors.ts'
 export default class Access {
 
   private static readonly sessionSign = Deno.env.get('SESSION_SIGN') ?? config()['SESSION_SIGN']
@@ -67,10 +67,6 @@ export default class Access {
     }
   }
 
-  public static authorize (ctx: Context, data: DataObject) {
-    //TODO
-  }
-
   // DECORATORS
   public static isAuthenticated (role?: string): Function {
     if (!Access.sessionSign) throw new Error("Session Secret is not defined")
@@ -91,8 +87,6 @@ export default class Access {
         context.assert(decoded, 401, "Unauthorized")
 
         data.auth = decoded
-        // context.response.body = decoded
-
         let result = originalMethod.apply(this, [context, data])
         return result
       }
