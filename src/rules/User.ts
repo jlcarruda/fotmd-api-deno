@@ -1,8 +1,9 @@
 import { Context } from 'https://deno.land/x/oak/mod.ts'
-import { User } from '../models.ts'
+import { User, Character } from '../models.ts'
 import Access from '../handlers/Access.ts'
 import { UserSignupFailError } from '../errors.ts'
-import { SignupPayload } from '../types.ts'
+import { SignupPayload, DataDocument } from '../types.ts'
+import DataObject from '../utils/DataObject.ts'
 
 const { isAuthenticated, authenticate } = Access
 
@@ -16,7 +17,6 @@ export default class UserRules {
     try {
       const body = await ctx.request.body()
       const payload: SignupPayload = body.value
-      console.log(payload)
       const inserted = await User.signup(payload)
       if (!inserted) return Promise.reject(new UserSignupFailError())
       ctx.response.body = {
@@ -36,7 +36,17 @@ export default class UserRules {
   }
 
   @isAuthenticated()
-  public static getCharacters (ctx: Context) {
-
+  public static async getCharacters (ctx: Context, data: DataObject) {
+    try {
+      const user: DataDocument = await User.findByUsername(data.auth?.username)
+      const characters: Array<DataDocument> = await Character.findByUser(user._id)
+      ctx.response.body = {
+        data: user,
+        included: characters
+      }
+    } catch (error) {
+      console.error("Error while retrieving Characters from User", error)
+      throw error
+    }
   }
 }

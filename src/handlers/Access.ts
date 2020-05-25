@@ -10,7 +10,7 @@ import {
 
 import DataObject from "../utils/DataObject.ts";
 import { User } from '../models.ts'
-import { UserAuthenticationError } from '../errors.ts'
+import { UserAuthenticationError, UnauthorizedRuleAccessError } from '../errors.ts'
 export default class Access {
 
   private static readonly sessionSign = Deno.env.get('SESSION_SIGN') ?? config()['SESSION_SIGN']
@@ -54,18 +54,17 @@ export default class Access {
 
       ctx.response.body = {
         ...ctx.response.body,
-        token: makeJwt({ key: Access.sessionSign, header, payload })
+        meta: {
+          ...ctx.response.body?.meta,
+          token: makeJwt({ key: Access.sessionSign, header, payload })
+        }
       }
     } catch (error) {
       if (error instanceof UserAuthenticationError) {
         return ctx.throw(401, error.message)
       }
-      ctx.throw(500)
+      return ctx.throw(500)
     }
-  }
-
-  public static authorize (ctx: Context, data: DataObject) {
-    //TODO
   }
 
   // DECORATORS
@@ -88,8 +87,6 @@ export default class Access {
         context.assert(decoded, 401, "Unauthorized")
 
         data.auth = decoded
-        context.response.body = decoded
-
         let result = originalMethod.apply(this, [context, data])
         return result
       }
