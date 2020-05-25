@@ -13,34 +13,48 @@ This project was born with the goal to create an API to handle the requests made
 * Implement User roles
 * Custom Types enum  <u>*(DONE. Its not an Enum, but a module)*</u>
 * Custom errors lib <u>*(DONE)*</u>
-* Models<u>*(0/3)*</u>
-  * User Model
-  * Character Model
+* Models<u>*(2/7)*</u>
+  * User Model <u>*(DONE)*</u>
+  * Character Model <u>*(DONE)*</u>
   * Table Model
-* 'Mongoose' Like Schema validator for models <u>*(2/3)*</u>
+  * System Model
+  * Machine Type Model
+  * Machine Model Model
+  * Components Model
+* 'Mongoose' Like Schema validator for models <u>*(3/3)*</u>
   * schemaToObject <u>*(DONE. Implemented into the Model class. Later will be isolated)*</u>
   * validate schema on saving <u>*(DONE)*</u>
-  * populate
+  * populate <u>*(DONE)*</u>
 
 ## Routes
+#### Fall of the Men's Days System
+* GET /fotmd/machine_types
+* GET /fotmd/machine_types/:id
+* GET /fotmd/machine_models
+* GET /fotmd/machine_models/:id
+* GET /fotmd/systems
+* GET /fotmd/systems/:id
+* GET /fotmd/components
+* GET /fotmd/components/:id
+
 #### User
 * POST /user/auth <u>*(DONE)*</u>
 * POST /user/signup <u>*(DONE)*</u>
 * POST /user/logout
 * GET /user/profile
-* GET /user/character
-* GET /user/character/:id
+* GET /user/characters
+* GET /user/characters/:id
 * GET /user/tables/owned
 * GET /user/tables/joined
 
 #### Dungeon Master
 * POST /dm/auth
 * POST /dm/logout
-* GET /dm/table
-* GET /dm/table/:id
+* GET /dm/tables
+* GET /dm/tables/:id
 
 #### Web Socket connections
 * /table/join/:id
 * /table/leave/:id
-* /table/:id/character
+* /table/:id/characters
 * /table/:id/info
