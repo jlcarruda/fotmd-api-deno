@@ -10,8 +10,6 @@ export type GenericObject = { [key: string]: any }
 export type SchemaAtribute = { type: MongoType , default?: string | Object, null?: boolean, ref?: Model }
 export type Schema = { [key: string]: SchemaAtribute }
 export interface DataDocument {
-  build(model: Model, doc: any): any
-  generateAtbs(doc: any): any
   populate(atb: string): any
   [key: string]: any
 }

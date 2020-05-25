@@ -57,12 +57,13 @@ export default class User extends Model {
     }
   }
 
+  public async findByUsername(username: string) {
+    const user = await this.findOne({ username })
+    return user
+  }
+
   private async encryptPassword(password: string) {
     return bcrypt.hash(password)
   }
 
-  private async findByUsername(username: string) {
-    const user = await this.findOne({ username })
-    return user
-  }
 }

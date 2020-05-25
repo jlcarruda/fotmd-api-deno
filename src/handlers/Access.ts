@@ -54,13 +54,16 @@ export default class Access {
 
       ctx.response.body = {
         ...ctx.response.body,
-        token: makeJwt({ key: Access.sessionSign, header, payload })
+        meta: {
+          ...ctx.response.body?.meta,
+          token: makeJwt({ key: Access.sessionSign, header, payload })
+        }
       }
     } catch (error) {
       if (error instanceof UserAuthenticationError) {
         return ctx.throw(401, error.message)
       }
-      ctx.throw(500)
+      return ctx.throw(500)
     }
   }
 
@@ -88,7 +91,7 @@ export default class Access {
         context.assert(decoded, 401, "Unauthorized")
 
         data.auth = decoded
-        context.response.body = decoded
+        // context.response.body = decoded
 
         let result = originalMethod.apply(this, [context, data])
         return result
