@@ -6,7 +6,8 @@ import { SchemaValidationError, MongoQueryError, ModelPayloadValidationError } f
 import {
   SchemaAtribute,
   GenericObject,
-  Schema
+  Schema,
+  DataDocument
 } from '../../types.ts'
 
 export default class Model {
@@ -109,17 +110,17 @@ export default class Model {
     return this.collection;
   }
 
-  public async find(query: Object) {
+  public async find(query: Object): Promise<Array<DataDocument>> {
     try {
       const result = await this.getCollection()?.find(query)
-      return Document.create(this, result)
+      return (<Array<DataDocument>> Document.create(this, result))
     } catch(error) {
       console.error(error)
       return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
     }
   }
 
-  public async findOne(query: Object) {
+  public async findOne(query: Object): Promise<DataDocument> {
     try {
       const result = await this.getCollection()?.findOne(query)
       return Document.create(this, result)
