@@ -1,3 +1,4 @@
+import { ObjectId } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
 import Model from './dependencies/Model.ts'
 import { User } from '../models.ts'
 
@@ -61,5 +62,9 @@ export default class Character extends Model {
 
       inventory: { type: 'array' }
     }
+  }
+
+  public async findByUser(userId: ObjectId) {
+    return this.find({ owner: userId })
   }
 }
