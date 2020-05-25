@@ -32,7 +32,7 @@ export default class UserRules {
 
   @isAuthenticated()
   public static getProfile (ctx: Context) {
-    ctx.response.body.response_object = "getPRofile"
+    ctx.response.body.response_object = "getProfile"
   }
 
   @isAuthenticated()

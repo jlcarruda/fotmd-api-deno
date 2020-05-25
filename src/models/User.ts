@@ -62,6 +62,7 @@ export default class User extends Model {
   }
 
   private async findByUsername(username: string) {
-    return this.getCollection()?.findOne({ username })
+    const user = await this.findOne({ username })
+    return user
   }
 }
