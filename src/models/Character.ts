@@ -1,10 +1,11 @@
 import Model from './dependencies/Model.ts'
+import { User } from '../models.ts'
 
 export default class Character extends Model {
   constructor() {
     super('characters')
     this.schema = {
-      owner: { type: 'string' },
+      owner: { type: 'ref', ref: User },
 
       // Sheet
       name: { type: 'string' },

@@ -1,7 +1,9 @@
 import { Collection, ObjectId } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
+
 import { DatabaseHandler } from '../../handlers/Database.ts'
+import * as Document from './Document.ts'
 import { SchemaValidationError, MongoQueryError, ModelPayloadValidationError } from '../../errors.ts'
-import { 
+import {
   SchemaAtribute,
   GenericObject,
   Schema
@@ -16,6 +18,10 @@ export default class Model {
 
   constructor(modelname: string) {
     this.modelname = modelname
+  }
+
+  protected getSchema(): Schema {
+    return this.schema
   }
 
   protected validatePayload(payload: GenericObject) {
@@ -92,6 +98,10 @@ export default class Model {
     return aux
   }
 
+  public getName(): string {
+    return this.modelname
+  }
+
   public getCollection(): Collection | null {
     if (!this.collection) {
       this.collection = DatabaseHandler.getInstance().getDatabase()?.collection(this.modelname) ?? null
@@ -102,7 +112,7 @@ export default class Model {
   public async find(query: Object) {
     try {
       const result = await this.getCollection()?.find(query)
-      return result
+      return Document.create(this, result)
     } catch(error) {
       console.error(error)
       return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
@@ -112,7 +122,7 @@ export default class Model {
   public async findOne(query: Object) {
     try {
       const result = await this.getCollection()?.findOne(query)
-      return result
+      return Document.create(this, result)
     } catch(error) {
       console.error(error)
       return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
