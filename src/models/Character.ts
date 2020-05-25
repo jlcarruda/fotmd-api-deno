@@ -1,6 +1,7 @@
 import { ObjectId } from 'https://deno.land/x/mongo@v0.7.0/mod.ts'
 import Model from './dependencies/Model.ts'
 import { User } from '../models.ts'
+import { DataDocument } from '../types.ts'
 
 export default class Character extends Model {
   constructor() {
@@ -64,7 +65,7 @@ export default class Character extends Model {
     }
   }
 
-  public async findByUser(userId: ObjectId) {
+  public async findByUser(userId: ObjectId): Promise<Array<DataDocument>> {
     return this.find({ owner: userId })
   }
 }

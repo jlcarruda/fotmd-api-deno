@@ -55,12 +55,11 @@ export function create(createModel?: Model, createDoc?: any): DataDocument | Arr
     }
   }
 
-  let response = Document
+  let response: DataDocument | Array<DataDocument> = Document
   let isArray = false
   if (createModel && Array.isArray(createDoc)) {
     isArray = true
     response = createDoc.map(doc => Document.build(createModel, doc))
   }
-
-  return (createModel && createDoc && !isArray) ? response.build(createModel, createDoc) : response
+  return (createModel && createDoc && !isArray) ? (<DataDocument> response).build(createModel, createDoc) : response
 }

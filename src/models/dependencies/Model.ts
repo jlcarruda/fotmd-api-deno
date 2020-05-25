@@ -21,10 +21,6 @@ export default class Model {
     this.modelname = modelname
   }
 
-  protected getSchema(): Schema {
-    return this.schema
-  }
-
   protected validatePayload(payload: GenericObject) {
     if (!this.schema) throw new ModelPayloadValidationError(`Schema from model ${this.modelname} is not set`)
     const keys = Object.keys(this.schema)
@@ -103,6 +99,10 @@ export default class Model {
     return this.modelname
   }
 
+  public getSchema(): Schema {
+    return this.schema
+  }
+
   public getCollection(): Collection | null {
     if (!this.collection) {
       this.collection = DatabaseHandler.getInstance().getDatabase()?.collection(this.modelname) ?? null
@@ -123,7 +123,7 @@ export default class Model {
   public async findOne(query: Object): Promise<DataDocument> {
     try {
       const result = await this.getCollection()?.findOne(query)
-      return Document.create(this, result)
+      return (<DataDocument> Document.create(this, result))
     } catch(error) {
       console.error(error)
       return Promise.reject(new MongoQueryError(`Query execution error: ${error}`))
